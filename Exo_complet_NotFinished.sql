@@ -64,15 +64,15 @@ CREATE TABLE gestion_evenements.reservations(
 --Stored Procedures
 -- Procedure to add a new salle (venue) in PostgreSQL
 CREATE OR REPLACE FUNCTION gestion_evenements.add_salle(
-    nom_salle VARCHAR(50),
-    ville_salle VARCHAR(30),
-    capacite_salle INT
+    _nom_salle VARCHAR(50),
+    _ville_salle VARCHAR(30),
+    _capacite_salle INT
 ) RETURNS INT AS $$
 DECLARE
     new_id INT;
 BEGIN
     INSERT INTO gestion_evenements.salles (nom, ville, capacite)
-    VALUES (nom_salle, ville_salle, capacite_salle)
+    VALUES (_nom_salle, _ville_salle, _capacite_salle)
     RETURNING id_salle INTO new_id;
     RETURN new_id;
 END;
@@ -80,13 +80,13 @@ $$ LANGUAGE plpgsql;
 
 -- Procedure to add a new festival in PostgreSQL
 CREATE OR REPLACE FUNCTION gestion_evenements.add_festival(
-    nom_festival VARCHAR(100)
+    _nom_festival VARCHAR(100)
 ) RETURNS INT AS $$
 DECLARE
     new_id INT;
 BEGIN
     INSERT INTO gestion_evenements.festivals (nom)
-    VALUES (nom_festival)
+    VALUES (_nom_festival)
     RETURNING id_festival INTO new_id;
     RETURN new_id;
 END;
@@ -94,14 +94,14 @@ $$ LANGUAGE plpgsql;
 
 -- Procedure to add a new artist in PostgreSQL
 CREATE OR REPLACE FUNCTION gestion_evenements.add_artiste(
-    nom_artiste VARCHAR(100),
-    nationalite_artiste CHAR(3)
+    _nom_artiste VARCHAR(100),
+    _nationalite_artiste CHAR(3)
 ) RETURNS INT AS $$
 DECLARE
     new_id INT;
 BEGIN
     INSERT INTO gestion_evenements.artistes (nom, nationalite)
-    VALUES (nom_artiste, nationalite_artiste)
+    VALUES (_nom_artiste, _nationalite_artiste)
     RETURNING id_artiste INTO new_id;
     RETURN new_id;
 END;
@@ -109,15 +109,15 @@ $$ LANGUAGE plpgsql;
 
 -- Procedure to add a new client in PostgreSQL
 CREATE OR REPLACE FUNCTION gestion_evenements.add_client(
-    nom_utilisateur_client VARCHAR(25),
-    email_client VARCHAR(50),
-    mot_de_passe_client CHAR(60)
+    _nom_utilisateur_client VARCHAR(25),
+    _email_client VARCHAR(50),
+    _mot_de_passe_client CHAR(60)
 ) RETURNS INT AS $$
 DECLARE
     new_id INT;
 BEGIN
     INSERT INTO gestion_evenements.clients (nom_utilisateur, email, mot_de_passe)
-    VALUES (nom_utilisateur_client, email_client, mot_de_passe_client)
+    VALUES (_nom_utilisateur_client, _email_client, _mot_de_passe_client)
     RETURNING id_client INTO new_id;
     RETURN new_id;
 END;
@@ -158,8 +158,11 @@ CREATE TRIGGER tg_bf_insert_evenement BEFORE INSERT ON gestion_evenements.evenem
 FOR EACH ROW EXECUTE PROCEDURE gestion_evenements.tg_bf_insert_evenement();
 
 -- Procedure to book a festival
-CREATE OR REPLACE FUNCTION gestion_evenements.reserver_festival(_id_festival INTEGER,
-                        _id_client INTEGER, _nb_places INTEGER) RETURNS VOID AS $$
+CREATE OR REPLACE FUNCTION gestion_evenements.reserver_festival(
+    _id_festival INTEGER,
+    _id_client INTEGER,
+    _nb_places INTEGER
+) RETURNS VOID AS $$
 DECLARE
     _evenement RECORD;
 BEGIN
